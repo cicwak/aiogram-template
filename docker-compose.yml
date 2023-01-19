@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: botdb
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bot-backend
+    ports:
+      - "5432:5432" # чек, на то, занят ли порт
+
+
+  redis:
+    container_name: botredis
+    image: redis:7
+    restart: always
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    command: "redis-server --save 20 1 --loglevel warning"
+
+  bot:
+    build: .
+    command: "python main.py"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
