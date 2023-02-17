@@ -10,6 +10,8 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher, executor, types
+from handlers import register_all_handlers
+
 
 API_TOKEN = os.getenv("TG_BOT_TOKEN")
 
@@ -18,7 +20,8 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
+register_all_handlers(dp)  # регистрация хендлеров!
+
 
 if __name__ == '__main__':
-    from handlers import dp
     executor.start_polling(dp, skip_updates=True)
