@@ -1,10 +1,16 @@
 from aiogram import Dispatcher
 
-from .handlers import register_NAME_handler
+from .commands import start
+from .messages import echo
 
 
 def register_all_handlers(dp: Dispatcher):
-    register_NAME_handler(dp)
+    # commands
+    dp.register_message_handler(start, commands=["start"])
+
+    # messages
+    dp.register_message_handler(echo)
+
     # тут вызываете функцию с регистрацией новых хендлеров
 
 
