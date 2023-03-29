@@ -13,6 +13,8 @@ from aiogram import Bot, Dispatcher, executor, types
 from handlers import register_all_handlers
 
 
+os.system("alembic upgrade head")
+
 API_TOKEN = os.getenv("TG_BOT_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
