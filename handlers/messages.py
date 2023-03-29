@@ -1,4 +1,4 @@
-from main import types
+from aiogram import types
 
 
 async def echo(message: types.Message):
