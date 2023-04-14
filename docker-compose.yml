@@ -2,7 +2,6 @@ version: "3.8"
 
 services:
   db:
-    container_name: botdb
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -15,7 +14,6 @@ services:
 
 
   redis:
-    container_name: botredis
     image: redis:7
     restart: always
     volumes:
