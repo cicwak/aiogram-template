@@ -1,3 +1,5 @@
+from contextvars import ContextVar
+
 from core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -31,3 +33,6 @@ def get_db() -> SessionLocal:
         yield db
     finally:
         db.close()
+
+
+db_session_var: ContextVar[AsyncSession] = ContextVar("db_session_var")
