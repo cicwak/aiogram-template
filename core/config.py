@@ -15,20 +15,20 @@ class Settings(BaseSettings):
 
     DEBUG: bool = Field(default=False, env='DEBUG')
 
+    @validator("DEBUG")
+    def validator_database_url(cls, v) -> bool:
+        return v == "True"
+
+    @validator("REDIS_HOST")
+    def validator_redis_host(cls, v):
+        return urlparse(v).hostname
+
+    @validator("REDIS_PORT")
+    def validator_redis_port(cls, v):
+        return urlparse(v).port
+
     class Config:
         env_file = ".env"
-
-        @validator("DEBUG")
-        def validator_database_url(cls, v) -> bool:
-            return v == "True"
-
-        @validator("REDIS_HOST")
-        def validator_redis_host(cls, v):
-            return urlparse(v).hostname
-
-        @validator("REDIS_PORT")
-        def validator_redis_port(cls, v):
-            return urlparse(v).port
 
 
 settings = Settings()
