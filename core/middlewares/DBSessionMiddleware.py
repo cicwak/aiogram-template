@@ -1,15 +1,7 @@
-from typing import Optional
-
-import aiogram.types
-import sqlalchemy
-from aiogram import types, Dispatcher
-from aiogram.dispatcher.handler import current_handler, CancelHandler
-from aiogram.dispatcher.middlewares import BaseMiddleware, LifetimeControllerMiddleware
-from sqlalchemy import select
+from aiogram.dispatcher.middlewares import LifetimeControllerMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.database import SessionLocal, db_session_var
-from db.models.profiles import Profiles
 
 
 class DBSessionMiddleware(LifetimeControllerMiddleware):

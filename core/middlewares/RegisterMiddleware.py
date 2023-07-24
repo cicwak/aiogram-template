@@ -2,13 +2,11 @@ from typing import Optional
 
 import aiogram
 import sqlalchemy
-from aiogram import types, Dispatcher
-from aiogram.dispatcher.handler import current_handler, CancelHandler
-from aiogram.dispatcher.middlewares import BaseMiddleware, LifetimeControllerMiddleware
+from aiogram.dispatcher.middlewares import LifetimeControllerMiddleware
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.database import SessionLocal, db_session_var
+from db.database import db_session_var
 from db.models.profiles import Profiles, profile_session_var
 
 

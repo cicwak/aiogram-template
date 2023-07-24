@@ -1,7 +1,4 @@
-import os
-from urllib.parse import urlparse
-
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, validator
 
 
 class Settings(BaseSettings):
@@ -15,6 +12,10 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
+        @validator("DEBUG")
+        def validator_database_url(cls, v) -> bool:
+            return v == "True"
 
 
 settings = Settings()
