@@ -1,4 +1,7 @@
+from contextlib import contextmanager
 from contextvars import ContextVar
+from functools import wraps
+from typing import Callable, Any, Coroutine, ParamSpec, TypeVar, cast
 
 from core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,7 +18,7 @@ engine = create_async_engine(
     pool_size=100, max_overflow=3
 )
 
-SessionLocal = sessionmaker(
+SessionLocal = sessionmaker(  # type: ignore
     autocommit=False,
     autoflush=False,
     bind=engine,
@@ -25,14 +28,43 @@ SessionLocal = sessionmaker(
 
 
 Base = declarative_base()
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
-def get_db() -> SessionLocal:
-    db = SessionLocal()
+def require_session():
+    session = db_session_var.get()
+    assert session is not None, "Session context is not provided"
+    return session
+
+
+def transaction():
+    def wrapper(
+            cb: Callable[P, Coroutine[Any, Any, T]]
+    ) -> Callable[P, Coroutine[Any, Any, T]]:
+        @wraps(cb)
+        async def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
+            if db_session_var.get() is not None:
+                return await cb(*args, **kwargs)
+
+            async with cast(AsyncSession, SessionLocal()) as session:
+                with use_context_value(db_session_var, session):
+                    result = await cb(*args, **kwargs)
+                    await session.commit()
+                    return result
+
+        return wrapped
+
+    return wrapper
+
+
+@contextmanager
+def use_context_value(context: ContextVar[T], value: T):
+    reset = context.set(value)
     try:
-        yield db
+        yield
     finally:
-        db.close()
+        context.reset(reset)
 
 
-db_session_var: ContextVar[AsyncSession] = ContextVar("db_session_var")
+db_session_var: ContextVar[AsyncSession | None] = ContextVar("db_session_var", default=None)
